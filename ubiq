@@ -1,0 +1,53 @@
+#! /bin/bash
+
+ProgName=$(basename $0)
+Auser=quser
+DeviceIp="192.168.0.25"
+
+sub_help(){
+    echo "Usage: $ProgName <subcommand> [options]\n"
+    echo "Subcommands:"
+    echo "    repo   Generate gitops repo"
+    echo "    host   Run container to host the git repo"
+    echo ""
+    echo "For help with each subcommand run:"
+    echo "$ProgName <subcommand> -h|--help"
+    echo ""
+}
+
+sub_repo() {
+    ip_address=$(hostname -I | awk '{print $1}')
+    command cargo generate --git https://github.com/ubiquitous-factory/ubiq templates/gitops -d ip=$ip_address -d serviceuser=$Auser
+}
+
+sub_device_user() {
+
+ssh root@$DeviceIp "useradd $Auser"
+ssh root@$DeviceIp "mkdir /home/$Auser/.ssh"
+ssh root@$DeviceIp "chmod 700 /home/$Auser/.ssh"
+ssh root@$DeviceIp "cp /root/.ssh/authorized_keys /home/$Auser/.ssh/authorized_keys"
+ssh root@$DeviceIpc "chmod 600 /home/$Auser/.ssh/authorized_keys"
+ssh root@$DeviceIp "chown -R $Auser:$Auser /home/$Auser/.ssh/"
+
+}
+
+sub_host() {
+    # generate the nginx container file and put it into the user systemctl folder
+    echo "placeholder for host"
+}
+
+subcommand=$1
+case $subcommand in
+    "" | "-h" | "--help")
+        sub_help
+        ;;
+    *)
+        shift
+        sub_${subcommand} $@
+        if [ $? = 127 ]; then
+            echo "Error: '$subcommand' is not a known subcommand." >&2
+            echo "       Run '$ProgName --help' for a list of known subcommands." >&2
+            exit 1
+        fi
+        ;;
+esac
