@@ -17,7 +17,7 @@ sub_help(){
 
 sub_repo() {
     ip_address=$(hostname -I | awk '{print $1}')
-    command cargo generate --git https://github.com/ubiquitous-factory/ubiq templates/gitops -d ip=$ip_address -d serviceuser=$Auser
+    command cargo generate --git https://github.com/ubiquitous-factory/ubiq.git services/gitops -d ip=$ip_address -d serviceuser=$Auser
 }
 
 sub_device_user() {

@@ -1,0 +1,10 @@
+configReload:
+  configURL: https://{{ip}}/{{serviceuser}}/main/config.yaml
+  schedule: "1/120 * * * * *"
+targetConfigs:
+- url: https://{{ip}}/{{serviceuser}}/{{project}}.git
+  targetPath: "/"
+  branch: "main"
+  schedule: "1/60 * * * * *"
+
+  # git clone jack@SERVER_IP:/var/www/html/jack.git
